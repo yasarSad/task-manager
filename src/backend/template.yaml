@@ -1,0 +1,146 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Globals:
+  Function:
+    Runtime: nodejs18.x
+    MemorySize: 128
+    Timeout: 10
+
+Resources:
+  TaskManagerApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: TaskManagerAPI
+      StageName: Prod
+
+  TaskTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: TaskTable
+      AttributeDefinitions:
+        - AttributeName: taskID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: taskID
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  TaskUpdateTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Task Updates and Notifications
+
+  TaskLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: TaskLambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: TaskManagerPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - sns:Publish
+                Resource:
+                  - !GetAtt TaskTable.Arn
+                  - !Ref TaskUpdateTopic
+
+  CreateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      CodeUri: create_task
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt TaskLambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TaskTable
+          SNS_TOPIC_ARN: !Ref TaskUpdateTopic
+      Events:
+        CreateTaskApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TaskManagerApi
+            Path: /tasks
+            Method: post
+
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      CodeUri: delete_task
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt TaskLambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TaskTable
+          SNS_TOPIC_ARN: !Ref TaskUpdateTopic
+      Events:
+        DeleteTaskApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TaskManagerApi
+            Path: /tasks
+            Method: delete
+
+  GetTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      CodeUri: get_tasks
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt TaskLambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TaskTable
+          SNS_TOPIC_ARN: !Ref TaskUpdateTopic
+      Events:
+        GetTasksApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TaskManagerApi
+            Path: /tasks
+            Method: get
+
+  UpdateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      CodeUri: update_task
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt TaskLambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TaskTable
+          SNS_TOPIC_ARN: !Ref TaskUpdateTopic
+      Events:
+        UpdateTaskApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TaskManagerApi
+            Path: /tasks
+            Method: put
+
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${TaskManagerApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
