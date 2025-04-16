@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from './gateway_connect/api';
 import { Typography, List, ListItem, ListItemText, Box, MenuItem, Select, FormControl, InputLabel, Button, Grid } from '@mui/material';
+import {useHistory} from 'react-router-dom';
 
 const DisplayTasks = () => {
     const [tasks, setTasks] = useState([]);
     const [priorityFilter, setPriorityFilter] = useState('');
     const [completionFilter, setCompletionFilter] = useState('');
+    const history = useHistory();
+
+
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -25,7 +29,7 @@ const DisplayTasks = () => {
     }, [priorityFilter, completionFilter]);
 
     const backtoCreate = () => {
-        window.location.href = "/create-task";
+        history.push("/create-task");
     };
 
     return (
@@ -43,7 +47,7 @@ const DisplayTasks = () => {
                     </Grid>
                     <Grid item>
                     <FormControl sx={{ minWidth: 120 }}>
-                    <InputLabel id="priority-filter-label" shrink>Priority Level List</InputLabel>
+                    <InputLabel id="priority-filter-label" shrink> Priority Level List</InputLabel>
                     <Select
                         labelId="priority-filter-label"
                         value={priorityFilter}
