@@ -2,14 +2,12 @@
 
 > Production-ready cloud-native application built with AWS serverless architecture, designed to auto-scale from 0 to 10,000+ concurrent users.
 
-[![Live Demo](https://img.shields.io/badge/demo-live-success)](YOUR_LIVE_LINK)
-[![AWS](https://img.shields.io/badge/AWS-Lambda-orange)](https://aws.amazon.com/)
+
 
 ## 🚀 Overview
 
 A full-stack serverless application demonstrating enterprise-grade cloud architecture with automatic scaling, secure authentication, and optimized database design. Built to showcase best practices for cost-effective, scalable web applications.
 
-**Live Demo:** [your-app.com](YOUR_LINK)
 
 ## 🏗️ Architecture
 ```
