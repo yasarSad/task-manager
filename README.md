@@ -78,32 +78,6 @@ A full-stack serverless application demonstrating enterprise-grade cloud archite
 - **Cost:** ~$5/month for 100K requests (vs ~$50/month for EC2)
 - **Scalability:** Tested up to 1,000 concurrent requests
 
-## 🚀 Quick Start
-```bash
-# Clone the repository
-git clone [your-repo-url]
-
-# Install dependencies
-npm install
-
-# Configure AWS credentials
-aws configure
-
-# Deploy to AWS
-npm run deploy
-
-# Run locally
-npm run dev
-```
-
-## 🔐 Environment Variables
-```
-AWS_REGION=us-east-1
-COGNITO_USER_POOL_ID=your_pool_id
-COGNITO_CLIENT_ID=your_client_id
-DYNAMODB_TABLE_NAME=your_table_name
-```
-
 ## 📝 API Endpoints
 
 | Method | Endpoint | Description |
@@ -146,8 +120,8 @@ MIT
 ## 👤 Author
 
 **Yasar Sadozai**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourprofile)
+- GitHub: [@yasarSad](https://github.com/)
+- LinkedIn: [Yasar Sadozai](https://www.linkedin.com/in/yasar-sadozai/)
 - Email: yasarsadozai@gmail.com
 
 ---
